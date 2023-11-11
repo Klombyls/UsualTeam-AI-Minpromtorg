@@ -45,23 +45,25 @@ class CheckDungerZone():
                     (int(people['box']['x2']), int(people['box']['y1']))
                 ]
                 intersect = self.intersection.GetZoneEntryPercentage(points, cameraName)
+                if intersect == None:
+                    intersect = [0]
                 self.drawPeople(img, people, intersect)
                 result.append([intersect, people['confidence']])
         return [result, img]
 
     def predictFile(self, filepath: str):
+        response = self.model(filepath)
         img = cv2.imread(filepath)
         cameraName = Path(filepath).stem
         if  self.dangerZones.get(cameraName):
             self.drawDangerZones(img, self.dangerZones[cameraName])
-        response = self.model(filepath)
         return self.calculatePredict(response, img, cameraName)
     
     def predictImage(self, img, cameraName):
+        response = self.model(img)
         result = []
         if  self.dangerZones.get(cameraName):
             self.drawDangerZones(img, self.dangerZones[cameraName])
-        response = self.model(img)
         return self.calculatePredict(response, img, cameraName)
             
     def parseZoneToPolygon(self, zone):

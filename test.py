@@ -56,7 +56,7 @@ def test():
             break
         # выводим картинку с камеры
         cv2.resize(frame, (1920, 1080))
-        result = checker.predictImage(frame, '')
+        result = checker.predictImage(frame, 'my camera')
         cv2.imshow("Face detection", result[-1])
 
 if __name__ == '__main__':

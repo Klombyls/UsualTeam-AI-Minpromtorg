@@ -1,4 +1,7 @@
-.png
+*.png
+*.jpg
+*.pt
 cameras/
 danger_zones/
 test/
+dataset/
