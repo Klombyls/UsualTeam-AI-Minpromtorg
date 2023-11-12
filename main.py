@@ -7,13 +7,13 @@ from pathlib import Path
 def main():
     modelName = './models/large.pt'
     dangerZonesPath = './danger_zones'
+    inputDir = './videos'
 
     f = open('./result.csv', 'w', newline='')
     writer = csv.writer(f, delimiter = ",")
-    writer.writerow(['camera_name', '\"'+"frame_filename"+'\"', '\"'+"in_danger_zone"+'\"', '\"'+"percent"+'\"'])
+    writer.writerow(['camera_name'+','+'\"'+"frame_filename"+'\"'+','+'\"'+"in_danger_zone"+'\"'+','+'\"'+"percent"+'\"'])
     checker = DangerZoneHandler(modelName)
     checker.loadDangerZone(dangerZonesPath)
-    inputDir = './videos'
     for directory in os.listdir(inputDir):
         if os.path.isdir(inputDir + '/' + directory):
             for file in os.listdir(inputDir + '/' + directory):
@@ -28,9 +28,9 @@ def main():
                 for people in result[:-1][0]:
                     l = []
                     if max(people[0]) >= 15:
-                        writer.writerow([camera, '\"'+file+'\"', '\"'+'True'+'\"', '\"'+str(max(people[0]))+'\"'])
+                        writer.writerow([camera+','+'\"'+file+'\"'+','+'\"'+'True'+'\"'+','+'\"'+str(round(max(people[0]), 2))+'\"'])
                     else:
-                        writer.writerow([camera, '\"'+file+'\"', '\"'+'False'+'\"', '\"'+"0"+'\"'])
+                        writer.writerow([camera+','+'\"'+file+'\"'+','+'\"'+'False'+'\"'+','+'\"'+"0.0"+'\"'])
                 plt.imshow(img)
                 plt.show()
 
