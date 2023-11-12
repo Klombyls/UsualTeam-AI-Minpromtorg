@@ -5,14 +5,15 @@ from pathlib import Path
 
 
 def main():
-    modelName = './models/small.pt'
+    modelName = './models/large.pt'
     dangerZonesPath = './danger_zones'
 
     f = open('./result.csv', 'w', newline='')
-    writer = csv.writer(f, delimiter = ";")
+    writer = csv.writer(f, delimiter = ",")
+    writer.writerow(['camera_name', '\"'+"frame_filename"+'\"', '\"'+"in_danger_zone"+'\"', '\"'+"percent"+'\"'])
     checker = DangerZoneHandler(modelName)
     checker.loadDangerZone(dangerZonesPath)
-    inputDir = './test'
+    inputDir = './videos'
     for directory in os.listdir(inputDir):
         if os.path.isdir(inputDir + '/' + directory):
             for file in os.listdir(inputDir + '/' + directory):
@@ -25,12 +26,11 @@ def main():
                 result = checker.predictImage(img, camera)
 
                 for people in result[:-1][0]:
+                    l = []
                     if max(people[0]) >= 15:
-                        print('True', max(people[0]))
-                        writer.writerow([path, 'True', max(people[0])])
-                    else: 
-                        print('False', max(people[0]))
-                        writer.writerow([path, 'False', max(people[0])])
+                        writer.writerow([camera, '\"'+file+'\"', '\"'+'True'+'\"', '\"'+str(max(people[0]))+'\"'])
+                    else:
+                        writer.writerow([camera, '\"'+file+'\"', '\"'+'False'+'\"', '\"'+"0"+'\"'])
                 plt.imshow(img)
                 plt.show()
 

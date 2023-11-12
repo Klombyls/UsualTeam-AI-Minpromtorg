@@ -2,7 +2,7 @@ import cv2, json
 from predict import DangerZoneHandler
 from ultralytics import YOLO
 
-modelName = './models/extreme.pt'
+modelName = './models/nano.pt'
 dangerZonesPath = './danger_zones'
 model = YOLO(modelName)
 
