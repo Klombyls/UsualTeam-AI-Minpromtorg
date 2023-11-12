@@ -1,16 +1,13 @@
 from ultralytics import YOLO
 import cv2, json, os
-import matplotlib.pyplot as plt
 from pathlib import Path
 from GetIntersectionArea import GetIntersectionArea
 
 
-modelName = 'best2.pt'
-imgpath = './Spp-210-K1-3-3-6.jpg'
-imgpath = './Php-Angc-K3-1.jpg'
+modelName = 'best3.pt'
 dangerZonesPath = './danger_zones'
 
-class CheckDungerZone():
+class DangerZoneHandler():
     def __init__(self, modelName):
         self.modelName = modelName
         self.model = YOLO(self.modelName)
@@ -48,11 +45,11 @@ class CheckDungerZone():
                 if intersect == None:
                     intersect = [0]
                 self.drawPeople(img, people, intersect)
-                result.append([intersect, people['confidence']])
+                result.append([intersect, people['confidence'], points])
         return [result, img]
 
     def predictFile(self, filepath: str):
-        response = self.model(filepath)
+        response = self.model.predict(filepath, verbose=False)
         img = cv2.imread(filepath)
         cameraName = Path(filepath).stem
         if  self.dangerZones.get(cameraName):
@@ -61,7 +58,6 @@ class CheckDungerZone():
     
     def predictImage(self, img, cameraName):
         response = self.model(img)
-        result = []
         if  self.dangerZones.get(cameraName):
             self.drawDangerZones(img, self.dangerZones[cameraName])
         return self.calculatePredict(response, img, cameraName)
@@ -87,27 +83,3 @@ class CheckDungerZone():
                 self.dangerZones[cameraname].append(self.parseZoneToPolygon(js))
         self.intersection.AddDangerAreas(self.dangerZones)
         return self.dangerZones
-
-
-def main():
-    checker = CheckDungerZone(modelName)
-    checker.loadDangerZone(dangerZonesPath)
-    inputDir = './test'
-    for file in os.listdir(inputDir):
-        path = inputDir + '/' + file
-        img = cv2.imread(path)
-        camera = Path(path).stem
-
-        result = checker.predictImage(img, camera)
-        #result = checker.predictFile(path)
-
-        for people in result[:-1][0]:
-            if max(people[0]) > 15:
-                print('True', max(people[0]))
-            else: print('False', max(people[0]))
-        plt.imshow(result[-1])
-        plt.show()
-
-
-if __name__ == '__main__':
-    main()

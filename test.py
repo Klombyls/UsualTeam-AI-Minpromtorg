@@ -1,8 +1,8 @@
 import cv2, json
-from predict import CheckDungerZone
+from predict import DangerZoneHandler
 from ultralytics import YOLO
 
-modelName = 'best2.pt'
+modelName = './models/extreme.pt'
 dangerZonesPath = './danger_zones'
 model = YOLO(modelName)
 
@@ -13,7 +13,7 @@ def drawRectangle(img, polygons):
         cv2.line(img, polygons[i], polygons[i - 1], color, thickness)
 
 def main():
-    checker = CheckDungerZone(modelName)
+    checker = DangerZoneHandler(modelName)
     checker.loadDangerZone(dangerZonesPath)
     # получаем видео с камеры
     video=cv2.VideoCapture(0)
@@ -41,7 +41,7 @@ def main():
         cv2.imshow("Face detection", frame)
 
 def test():
-    checker = CheckDungerZone(modelName)
+    checker = DangerZoneHandler(modelName)
     checker.loadDangerZone(dangerZonesPath)
     # получаем видео с камеры
     video=cv2.VideoCapture(0)

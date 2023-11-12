@@ -5,3 +5,5 @@ cameras/
 danger_zones/
 test/
 dataset/
+runs/
+models/
